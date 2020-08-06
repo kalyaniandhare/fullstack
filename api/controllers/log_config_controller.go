@@ -11,12 +11,11 @@ import (
 	"strings"
 	"time"
 
+	"github.com/kalyaniandhare/fullstack/api/models"
+	"github.com/kalyaniandhare/fullstack/api/responses"
 	//"github.com/jinzhu/gorm"
 	"io/ioutil"
 	"net/http"
-
-	"github.com/kalyaniandhare/fullstack/api/models"
-	"github.com/kalyaniandhare/fullstack/api/responses"
 )
 
 func (server *Server) CreateLogConfig(w http.ResponseWriter, r *http.Request) {
@@ -99,6 +98,49 @@ func predefineLogLevels(currentLog string) []string {
 	return x
 
 }
+//func testscanner() {
+//	src, err := os.Open("app.txt")
+//	scanner := NewScanner(strings.NewReader(src), len(src))
+//	for {
+//		line, pos, err := scanner.Line()
+//		if err != nil {
+//			fmt.Println("Error:", err)
+//			break
+//		}
+//		fmt.Printf("Line start: %2d, line: %s\n", pos, line)
+//	}
+//
+//}
+//func getSeekLocation() int64 {
+//	start := int64(0)
+//	input, err := os.Open("app.txt")
+//	if err != nil {
+//		fmt.Println(err)
+//	}
+//	if _, err := input.Seek(start, io.SeekStart); err != nil {
+//		fmt.Println(err)
+//	}
+//	scanner := bufio.NewScanner(input)
+//
+//	pos := start
+//	scanLines := func(data []byte, atEOF bool) (advance int, token []byte,
+//		err error) {
+//		advance, token, err = bufio.ScanLines(data, atEOF)
+//		pos += int64(advance)
+//		return
+//	}
+//
+//	scanner.Split(scanLines)
+//	for scanner.Scan(){
+//		fmt.Println(scanner.Text(),"@@@@@@@@@@@@@")
+//	}
+//	fmt.Println(scanner.Scan(),"#################")
+//	fi, err :=input.Stat()
+//	size := int64(fi.Size())
+//	return size - pos
+//}
+
+
 func CreateConfig(obj *models.LogConfig, db *gorm.DB) {
 	f, err := os.Open("app.txt")
 	if err != nil {
@@ -114,12 +156,10 @@ func CreateConfig(obj *models.LogConfig, db *gorm.DB) {
 
 	intervalInSec := obj.Interval
 	currentIntervalTime := intervalInSec /60
-
 	scanner := backscanner.New(f, int(fi.Size()))
 
 	for {
 		line, pos, err := scanner.Line()
-
 		var result map[string]interface{}
 		json.Unmarshal([]byte(line), &result)
 
